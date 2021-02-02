@@ -1,0 +1,14 @@
+% path = 'E:\Thesis\code\dataset_25/pos';
+% img_type = '.png';
+fun
+
+
+% % % % % % % % % % % % % % % % % % % 
+Img_list =  dir([path '\' '*' img_type]);
+for idx = 1: size(Img_list,1)
+     img = imread([path '\' Img_list(idx).name  ]);
+     img_name = strcat(num2str(idx,'%04d'),img_type);
+     imwrite (img,strcat(path,'/',img_name));
+%      delete(img_name);delete(strcat(path ,'\',img_name))
+    delete(strcat(path ,'/',Img_list(idx).name));
+end

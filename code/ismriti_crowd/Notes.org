@@ -1,0 +1,9 @@
+* Image warping (using opencv findHomography, warpPerspective) 
+
+http://study.marearts.com/2015/03/image-warping-using-opencv.html
+
+
+here code of perspective correction in c++,python of sbi card
+
+https://stackoverflow.com/questions/22656698/perspective-correction-in-opencv-using-python
+

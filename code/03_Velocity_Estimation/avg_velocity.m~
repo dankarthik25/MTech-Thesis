@@ -1,0 +1,88 @@
+function var_vel = avg_velocity(loc,vf,img_sz,sigma)% Vf,GT loc = GT{f};vf = double(Vf{f});
+
+% sigma = sdt*m2p;
+r1 = sigma;r2 = 2*sigma;
+gaussian1 = fspecial('gaussian', 6*ceil(r1)+1, ceil(r1));
+gaussian2 = fspecial('gaussian',  6*ceil(r2)+1, ceil(r2));
+
+% for f = f:size(Vf,2)
+ux  = double(zeros(img_sz));uy = ux;
+
+if (~isempty(loc))&&(~isempty(vf))
+    for i = 1:min(size(loc,1),size(vf,1))
+        if (loc(i,1)>0)&& (loc(i,1)<= img_sz(1))&&(loc(i,2)>0)&&(loc(i,2)<= img_sz(2))
+            ux(ceil(loc(i,1)),ceil(loc(i,2))) = vf(i,1);
+            uy(ceil(loc(i,1)),ceil(loc(i,2))) = vf(i,2);
+        end
+    end
+end
+ux_avg = imfilter(double(ux),gaussian1,'replicate'); uy_avg = imfilter(double(uy),gaussian1,'replicate');
+
+var_x  = double(zeros(img_sz));var_y = var_x;
+if (~isempty(loc))&&(~isempty(vf))
+    for i = 1:min(size(loc,1),size(vf,1))
+        if (loc(i,1)>0)&& (loc(i,1)<= img_sz(1))&&(loc(i,2)>0)&&(loc(i,2)<= img_sz(2))
+            var_x(ceil(loc(i,1)),ceil(loc(i,2))) = ux_avg(ceil(loc(i,1)),ceil(loc(i,2)));
+            var_y(ceil(loc(i,1)),ceil(loc(i,2))) = uy_avg(ceil(loc(i,1)),ceil(loc(i,2)));
+        end
+    end
+end
+var_x = imfilter(double(ux),gaussian1,'replicate'); uy_avg = imfilter(double(uy),gaussian1,'replicate');
+
+% var_uxx = imfilter(double(ux),gaussian1,'replicate') -  imfilter(double(ux),gaussian2,'replicate');
+% var_uyy = imfilter(double(uy),gaussian1,'replicate') -  imfilter(double(uy),gaussian2,'replicate');
+% var_uyx = imfilter(double(uy),gaussian1,'replicate') -  imfilter(double(ux),gaussian2,'replicate');
+% var_uxy = imfilter(double(ux),gaussian1,'replicate') -  imfilter(double(uy),gaussian2,'replicate');
+% %
+% var_vel = sqrt(var_uxx.^2 + var_uyy.^2+  var_uxy.^2 + var_uyx.^2 );
+%     plot_var_vel(f) = sum(sum(den))/(img_sz(1)*img_sz(2));
+% end
+
+
+
+
+
+
+% % % % % % % % % % % % % % %
+% % for f = 1:size(GT,2)
+% %     loc = GT{f};vf = double(Vf{f});
+% %     if (~isempty(loc))&&(~isempty(vf))
+% %         for i = 1:min(size(loc,1),size(vf,1))
+% %             x_i = loc(i,:);
+% %             v_temp(1:2)= 0;v_avg(i,:) = v_temp;
+% %             w_avg = 0;
+% %             if (loc(i,1)>0)&& (loc(i,1)<=size(vid,1))&&(loc(i,2)>0)&&(loc(i,2)<= size(vid,2))
+% %
+% %                 for j = 1:min(size(loc,1),size(vf,1))
+% %                     x_j = loc(j,:);
+% %                     v_j = vf(j,:);
+% %                     if (loc(j,1)>0)&& (loc(j,1)<=size(vid,1))&&(loc(j,2)>0)&&(loc(j,2)<= size(vid,2))
+% %                         w_j = double(exp(-(x_i-x_j)*(x_i - x_j)'/(2*sigma^2)));
+% %                         v_temp(1) = v_temp(1) + v_j(1)*w_j;
+% %                         v_temp(2) = v_temp(2) + v_j(2)*w_j;
+% %                         w_avg = w_avg + w_j;
+% %                     end
+% %                 end
+% %                 v_temp = v_temp/w_avg;
+% %             end
+% %             v_avg(i,:) = v_temp;
+% %         end
+% %         V_AVG{f} = v_avg;
+% %     end
+% % end
+% % %
+% % for f =1 :size(V_AVG,2)
+% %     v_avg = V_AVG{f};
+% %     v_f = Vf{f};
+% %     temp = 0;
+% %     for i =1:min(size(v_avg,1),size(v_f,1))
+% %          temp = temp + sqrt(sum( (v_f(i,:)-v_avg(i,:)).^2));
+% %     end
+% %     delta_v(f) = temp;
+% % end
+% % plot(1:1870,delta_v);
+% % show_center(loc,img);
+% % imshow(img);
+% % hold on;
+% % quiver(x,y,u,v);
+% % hold off;

@@ -1,0 +1,26 @@
+% function[trk ] =  kft(GT,vid)
+clear trk;
+s_f = 100;min_dis =50;trk_t = 10;
+dt =1;ws_mag =1;ob_noise = 0.1;
+
+[A B u Ex, H Ez] =  inc_kal(dt,ws_mag,ob_noise);P = Ex;
+Zf = GT{s_f}';
+trk = int_trk();nt = size(Zf,2);  
+X= [Zf(1,:) ;Zf(2,:) ;zeros(1,size(Zf,2)); zeros(1,size(Zf,2))];
+Xf = nan(4,200);Xf(:,1:size(X,2)) = X;              % estimate of initial location estimation 
+% nt =  lenght(find(isnan(Xf(1,:))==0)) ; % Total No. track 
+% new
+f = s_f;% 
+
+ for f = s_f:s_f +200
+Zf = GT{f}';                                 % set new number of detections
+[Xf P K ] = predict_kal(nt,A,Xf,B,u,H,P,Ex,Ez); % Predict next state with state and predicted motion
+asg = opt_assign(nt,Xf,Zf,min_dis);         % now we assign the detections to estimated track positions
+[Xf P ] = update_kal(asg,Zf,Xf,H,K,P);         % updating the state by assign
+[Xf nt trk ] = update_trk(asg,Xf,Zf,trk,nt,trk_t,f,s_f) ; % adding new track,removing bad trafk,updating nF
+show_track(vid(:,:,:,f),trk,trk_t);
+pause(0.10);
+end
+
+
+
